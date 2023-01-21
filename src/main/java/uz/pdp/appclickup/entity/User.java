@@ -12,6 +12,7 @@ import uz.pdp.appclickup.entity.enums.SystemRole;
 import uz.pdp.appclickup.entity.template.AbsUUIDEntity;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -31,6 +32,7 @@ public class User extends AbsUUIDEntity implements UserDetails {
     private String emailCode;
     @OneToOne(fetch = FetchType.LAZY)
     private Attachment attachment;
+    private Timestamp lastActiveTime;
 
     private boolean enabled;
     private boolean credentialsNonExpired=true;

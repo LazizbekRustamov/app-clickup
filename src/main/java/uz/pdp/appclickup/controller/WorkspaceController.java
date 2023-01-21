@@ -7,11 +7,13 @@ import org.springframework.web.bind.annotation.*;
 import uz.pdp.appclickup.dto.ApiResponse;
 import uz.pdp.appclickup.dto.MemberDto;
 import uz.pdp.appclickup.dto.WorkspaceDto;
+import uz.pdp.appclickup.dto.WorkspaceRoleDto;
 import uz.pdp.appclickup.entity.User;
 import uz.pdp.appclickup.security.CurrentUser;
 import uz.pdp.appclickup.service.WorkspaceService;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -55,6 +57,37 @@ public class WorkspaceController {
     @PutMapping("join")
     private HttpEntity<?> joinWorkspace(@RequestParam Long id,@CurrentUser User user) {  //@Currentuser bu sistemadagi userni olb beradi
         ApiResponse apiResponse = workspaceService.joinWorkspace(id,user);
+        return ResponseEntity.status(apiResponse.isSucces() ? 200 : 409).body(apiResponse);
+    }
+
+
+    @GetMapping("/get/{id}")
+    private HttpEntity<?> getMemberAndGuest(@PathVariable Long id) {
+        List<MemberDto> members= workspaceService.getMemberAndGuest(id);
+        return ResponseEntity.ok(members);
+    }
+
+
+
+    @GetMapping("/getMyWorkspace")
+    private HttpEntity<?> getMyWorkspace(@CurrentUser User user){    // Sisyemadagi userni olb beradi
+        List<WorkspaceDto> workspaces= workspaceService.getMyWorkspace(user);
+        return ResponseEntity.ok(workspaces);
+    }
+
+
+
+    @PostMapping("addRole")
+    private HttpEntity<?> addWorkspaceRole(@RequestParam Long workspaceId,@RequestBody WorkspaceRoleDto workspaceRoleDto,@CurrentUser User user) {
+        ApiResponse apiResponse = workspaceService.addWorkspaceRole(workspaceId,workspaceRoleDto,user);
+        return ResponseEntity.status(apiResponse.isSucces() ? 200 : 409).body(apiResponse);
+    }
+
+
+
+    @PutMapping("/addOrRemovePermission")
+    private HttpEntity<?> addOrRemovePermission(@RequestBody WorkspaceRoleDto workspaceRoleDto) {
+        ApiResponse apiResponse = workspaceService.addOrRemovePermission(workspaceRoleDto);
         return ResponseEntity.status(apiResponse.isSucces() ? 200 : 409).body(apiResponse);
     }
 }

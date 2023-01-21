@@ -6,4 +6,5 @@ import uz.pdp.appclickup.entity.WorkspaceRole;
 import java.util.UUID;
 
 public interface WorkspaceRoleRepository extends JpaRepository<WorkspaceRole,UUID> {
+    boolean existsByWorkspaceIdAndRoleName(Long workspace_id, String roleName);
 }
