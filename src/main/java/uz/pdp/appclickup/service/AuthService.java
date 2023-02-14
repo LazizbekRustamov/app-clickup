@@ -78,6 +78,7 @@ public class AuthService implements UserDetailsService {
             User user = optionalUser.get();
             if (emailCode.equals(user.getEmailCode())){
                 user.setEnabled(true);
+//                user.setEmailCode(null);   emailni ishlatganimdan keyin
                 userRepository.save(user);
 
                 return new ApiResponse("Akaunt tasdiqlandi",true);

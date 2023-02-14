@@ -27,6 +27,4 @@ public abstract class AbsMainEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User updatedBy;
-
-
 }

@@ -3,6 +3,7 @@ package uz.pdp.appclickup.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import uz.pdp.appclickup.dto.ApiResponse;
 import uz.pdp.appclickup.dto.MemberDto;
@@ -24,6 +25,7 @@ public class WorkspaceController {
     WorkspaceService workspaceService;
 
     @PostMapping
+    @PreAuthorize(value = "hasAuthority('CAN_EDIT_WORKSPACE')")  // Bu oddiy userniyam role qosholmasligi uchun bu ishlashi uchun security configda  narsa yozish kere// ya'ni SecurityConfigni ustiga @EnableGlobalMethodSecurity(prePostEnabled = true)qoyish kerak
     private HttpEntity<?> addWorkspace(@Valid @RequestBody WorkspaceDto workspaceDto, @CurrentUser User user) {
         ApiResponse apiResponse = workspaceService.addWorkspace(workspaceDto,user);
         return ResponseEntity.status(apiResponse.isSucces() ? 200 : 409).body(apiResponse);
@@ -32,29 +34,30 @@ public class WorkspaceController {
 
     @PutMapping("/{id}")
     private HttpEntity<?> editWorkspace(@PathVariable Long id, @Valid @RequestBody WorkspaceDto workspaceDto) {
-        ApiResponse apiResponse = workspaceService.editWorkspace(workspaceDto);
+        ApiResponse apiResponse = workspaceService.editWorkspace(id,workspaceDto);
         return ResponseEntity.status(apiResponse.isSucces() ? 200 : 409).body(apiResponse);
     }
 
     @PutMapping("/changeOwner/{id}")
-    private HttpEntity<?> changeOwnerWorkspace(@PathVariable Long id, @RequestParam UUID ownerId) {
-        ApiResponse apiResponse = workspaceService.changeOwnerWorkspace(id, ownerId);
+    private HttpEntity<?> changeOwnerWorkspace(@PathVariable Long id, @RequestParam UUID newOwnerId) {
+        ApiResponse apiResponse = workspaceService.changeOwnerWorkspace(id, newOwnerId);
         return ResponseEntity.status(apiResponse.isSucces() ? 200 : 409).body(apiResponse);
     }
 
     @DeleteMapping("/{id}")
+//    @PreAuthorize(value = "hasAuthority('CAN_EDIT_WORKSPACE')")  // Bu oddiy userniyam role qosholmasligi uchun bu ishlashi uchun security configda  narsa yozish kere// ya'ni SecurityConfigni ustiga @EnableGlobalMethodSecurity(prePostEnabled = true)qoyish kerak
     private HttpEntity<?> deleteWorkspace(@PathVariable Long id) {
         ApiResponse apiResponse = workspaceService.deleteWorkspace(id);
         return ResponseEntity.status(apiResponse.isSucces() ? 200 : 409).body(apiResponse);
     }
 
-    @PostMapping("addOrEditOrRemove/{id}")
-    private HttpEntity<?> addOrEditOrRemoveWorkspace(@PathVariable Long id,@RequestBody MemberDto memberDto) {
-        ApiResponse apiResponse = workspaceService.addOrEditOrRemoveWorkspace(id,memberDto);
+    @PostMapping("/addOrEditOrRemove/{id}")
+    private HttpEntity<?> addOrEditOrRemoveWorkspaceUser(@PathVariable Long id,@RequestBody MemberDto memberDto) {
+        ApiResponse apiResponse = workspaceService.addOrEditOrRemoveWorkspaceUser(id,memberDto);
         return ResponseEntity.status(apiResponse.isSucces() ? 200 : 409).body(apiResponse);
     }
 
-    @PutMapping("join")
+    @PutMapping("/join")
     private HttpEntity<?> joinWorkspace(@RequestParam Long id,@CurrentUser User user) {  //@Currentuser bu sistemadagi userni olb beradi
         ApiResponse apiResponse = workspaceService.joinWorkspace(id,user);
         return ResponseEntity.status(apiResponse.isSucces() ? 200 : 409).body(apiResponse);
@@ -71,7 +74,7 @@ public class WorkspaceController {
 
     @GetMapping("/getMyWorkspace")
     private HttpEntity<?> getMyWorkspace(@CurrentUser User user){    // Sisyemadagi userni olb beradi
-        List<WorkspaceDto> workspaces= workspaceService.getMyWorkspace(user);
+        List<WorkspaceDto> workspaces= workspaceService.getMyWorkspaces(user);
         return ResponseEntity.ok(workspaces);
     }
 

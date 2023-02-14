@@ -21,7 +21,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableWebSecurity        // Config klaassiga shu ikkalasini qoyish shart bu securityligini bildiradi
-@EnableGlobalMethodSecurity(prePostEnabled = true)   // // Bu  @PreAuthorize(value = "hasAuthority('ADD_ROLE')") bu ishlashiga uxsat beradi yani tekshirishga ruxsat beradi
+@EnableGlobalMethodSecurity(prePostEnabled = true)   // // Bu  @PreAuthorize(value = "hasAuthority('ADD_ROLE')") bu ishlashiga ruxsat beradi yani tekshirishga ruxsat beradi
 public class SecurityConfig extends WebSecurityConfigurerAdapter { // Buni extend qilish shart
 
     @Autowired
@@ -29,7 +29,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter { // Buni exten
     @Autowired
     JwtFilter jwtFilter;
 
-    @Bean
+    @Bean     //   Bean lar faqat @Configuration anotatsiyasi bor klassda yaratiladi
     PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
@@ -61,8 +61,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter { // Buni exten
         JavaMailSenderImpl mailSender=new JavaMailSenderImpl();
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
-        mailSender.setUsername("aziziakaxon@gmail.com");
-        mailSender.setPassword("Qwerty4455");
+        mailSender.setUsername("aziz@gmail.com");
+        mailSender.setPassword("*******");
 
         Properties properties = mailSender.getJavaMailProperties();
         properties.put("mail.transport.protocol","smtp");
